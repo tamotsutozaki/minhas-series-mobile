@@ -8,7 +8,7 @@ import {
 
 // Lista as séries já filtrando no SQL, da mais recente para a mais antiga.
 export async function getSeries(filtro: SerieFilter): Promise<Serie[]> {
-  const db = getDatabase();
+  const db = await getDatabase();
 
   if (filtro === 'todas') {
     return db.getAllAsync<Serie>(
@@ -24,12 +24,12 @@ export async function getSeries(filtro: SerieFilter): Promise<Serie[]> {
 }
 
 export async function getSerieById(id: number): Promise<Serie | null> {
-  const db = getDatabase();
+  const db = await getDatabase();
   return db.getFirstAsync<Serie>('SELECT * FROM series WHERE id = ?', id);
 }
 
 export async function createSerie(input: CreateSerieInput): Promise<Serie> {
-  const db = getDatabase();
+  const db = await getDatabase();
   const createdAt = new Date().toISOString();
 
   const result = await db.runAsync(
@@ -56,7 +56,7 @@ export async function updateSerie(
   id: number,
   input: UpdateSerieInput
 ): Promise<void> {
-  const db = getDatabase();
+  const db = await getDatabase();
   await db.runAsync(
     'UPDATE series SET titulo = ?, plataforma = ?, temporadas = ?, nota = ? WHERE id = ?',
     input.titulo,
@@ -68,7 +68,7 @@ export async function updateSerie(
 }
 
 export async function toggleSerieConcluida(id: number): Promise<void> {
-  const db = getDatabase();
+  const db = await getDatabase();
   await db.runAsync(
     'UPDATE series SET concluida = CASE WHEN concluida = 1 THEN 0 ELSE 1 END WHERE id = ?',
     id
@@ -76,6 +76,6 @@ export async function toggleSerieConcluida(id: number): Promise<void> {
 }
 
 export async function deleteSerie(id: number): Promise<void> {
-  const db = getDatabase();
+  const db = await getDatabase();
   await db.runAsync('DELETE FROM series WHERE id = ?', id);
 }
